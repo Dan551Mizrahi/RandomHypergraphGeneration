@@ -3,7 +3,6 @@ import random
 from collections import deque
 from typing import List, Tuple, Set, Dict, Any
 import matplotlib.pyplot as plt
-import scipy as sp
 
 
 def generate_random_hypergraph_from_a_tree(total_size: int, p: float, draw: bool = False) -> List[Tuple[int, ...]]:
