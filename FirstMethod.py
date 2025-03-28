@@ -39,7 +39,10 @@ def generate_random_hypergraph_from_scratch(num_nodes: int, num_hyperedges: int,
                             if j not in visited and (set(hypergraph[node]) & set(hypergraph[j])):
                                 stack.append(j)
                 connected_components.append(component)
-        largest_component = max(connected_components, key=len)
+        try:
+            largest_component = max(connected_components, key=len)
+        except ValueError:
+            largest_component = set()
         hypergraph = [hypergraph[i] for i in largest_component]
     # Make sure that the hypergraph is simple
     if make_simple:
