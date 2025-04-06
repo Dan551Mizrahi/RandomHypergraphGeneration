@@ -19,7 +19,7 @@ def main(num_hypergraphs: int, num_nodes: int, num_hyperedges: int, p: float, pa
         if method == 'from_scratch':
             hypergraph = generate_random_hypergraph_from_scratch(num_nodes, num_hyperedges, p)
         else:
-            hypergraph = generate_random_hypergraph_from_a_tree(num_nodes + num_hyperedges, p)
+            hypergraph = generate_random_hypergraph_from_a_tree(num_nodes + num_hyperedges, p, sperner=True)
         if name == 'Null':
             export_hg_to_dat(hypergraph, f'{path}/hypergraph_{i}.dat')
         else:

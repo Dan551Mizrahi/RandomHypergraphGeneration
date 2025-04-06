@@ -5,7 +5,7 @@ from typing import List, Tuple, Set, Dict, Any
 import matplotlib.pyplot as plt
 
 
-def generate_random_hypergraph_from_a_tree(total_size: int, p: float, draw: bool = False) -> List[Tuple[int, ...]]:
+def generate_random_hypergraph_from_a_tree(total_size: int, p: float, draw: bool = False, sperner = False) -> Set[Tuple[int, ...]]:
     """
     Generates a random connected hypergraph based on a random tree structure.
 
@@ -30,6 +30,7 @@ def generate_random_hypergraph_from_a_tree(total_size: int, p: float, draw: bool
            existing hyperedge (if it's not already part of it).
         draw: If True, visualize the generated tree, the partitioning,
               and the final incidence graph using matplotlib. Defaults to False.
+        sperner: If True, remove the hyperedegs that are porperly contained in another hyperedge.
 
     Returns:
         A list of tuples. Each tuple represents a hyperedge and contains
@@ -237,15 +238,47 @@ def generate_random_hypergraph_from_a_tree(total_size: int, p: float, draw: bool
     elif draw:
         print("Skipping incidence graph plot: No vertices or hyperedges in the final structure.")
 
+    if sperner and len(final_hyperedges_sets) > 1:
+        unique_hyperedges_map = {frozenset(h): h for h in final_hyperedges_sets}
+        unique_hyperedges_list = list(unique_hyperedges_map.values())
+
+        num_unique = len(unique_hyperedges_list)
+        proper_subset_indices = set()
+
+        for k in range(num_unique):
+            if k in proper_subset_indices:
+                continue
+            h_k = unique_hyperedges_list[k]
+            for j in range(num_unique):
+                if k == j:
+                    continue
+                h_j = unique_hyperedges_list[j]
+
+                if h_k.issubset(h_j) and h_k != h_j:
+                    proper_subset_indices.add(k)
+                    break
+
+        sperner_filtered_sets = [
+            unique_hyperedges_list[k]
+            for k in range(num_unique) if k not in proper_subset_indices
+        ]
+
+        final_hyperedges_sets = sperner_filtered_sets
+
+    # Convert sets to sorted tuples for the final output using the (potentially filtered) final_hyperedges_sets
+    final_hyperedges: Set[Tuple[int, ...]] = {
+        tuple(sorted(list(h_set))) for h_set in final_hyperedges_sets
+    }
+
     return final_hyperedges
 
 
 if __name__ == "__main__":
-    size = 15 # Total nodes in the initial tree (vertices + hyperedges)
+    size = 20 # Total nodes in the initial tree (vertices + hyperedges)
     add_prob = 0.1 # Probability to add an extra vertex to a hyperedge
 
     print(f"Generating hypergraph with initial size {size} and add probability {add_prob}")
-    random_hg = generate_random_hypergraph_from_a_tree(size, add_prob, draw=True)
+    random_hg = generate_random_hypergraph_from_a_tree(size, add_prob, draw=False, sperner=True)
 
     print("\nGenerated Hypergraph (List of Hyperedges):")
     if not random_hg:

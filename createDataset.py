@@ -23,23 +23,23 @@ def generate_hg_prob_p(num_hypergraphs: int,
     for i in range(num_hypergraphs):
         num_nodes = random.randint(min_node_num, max_node_num)
         num_hyperedges = random.randint(min_hyperedge_num, max_hyperedge_num)
-        main(1, num_nodes, num_hyperedges, p, path, method=method, name=f"{i}_nodes_{num_nodes}_hyperedges_{num_hyperedges}_p_{p:.2f}_{method}")
+        main(1, num_nodes, num_hyperedges, p, path, method=method, name=f"{i}_nodes_{num_nodes}_hyperedges_{num_hyperedges}_p_{p:.4f}_{method}")
 
 def create_diverse_dataset(method: str='from_scratch'):
-    list_of_probabilities = [0.05*x for x in range(1, 20)]
+    list_of_probabilities = [0.005*x for x in range(0, 20)]
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    path = os.path.join(script_dir, 'GenDatasets')
+    path = os.path.join(script_dir, 'GenDatasets2')
     os.makedirs(path, exist_ok=True)
     for p in list_of_probabilities:
         # create a folder for each probability
-        os.makedirs(f'{path}/p_{p:0.2f}', exist_ok=True)
+        os.makedirs(f'{path}/p_{p:0.4f}', exist_ok=True)
         generate_hg_prob_p(100,
                            p,
-                           5,
-                           50,
-                           5,
-                           50,
-                           f'{path}/p_{p:0.2f}',
+                           25,
+                           25,
+                           25,
+                           25,
+                           f'{path}/p_{p:0.4f}',
                            method=method)
 
 if __name__ == '__main__':
